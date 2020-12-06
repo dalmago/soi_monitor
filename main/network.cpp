@@ -6,7 +6,7 @@
 
 #include "network.h"
 
-static int s_retry_num = 0;
+static uint8_t s_retry_num = 0;
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group = nullptr;
 
@@ -46,17 +46,17 @@ bool wifi_connect(){
             pdFALSE,
             portMAX_DELAY);
 
-    /* xEventGroupWaitBits() returns the bits before the call returned, 
+    /* xEventGroupWaitBits() returns the bits before the call returned,
      * hence we can test which event actually happened. */
     bool result = false;
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "connected to ap SSID:%s", ESP_WIFI_SSID);
+        ESP_LOGD(TAG, "connected to ap SSID:%s", ESP_WIFI_SSID);
         result = true;
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
+        ESP_LOGW(TAG, "Failed to connect to SSID:%s, password:%s",
                  ESP_WIFI_SSID, ESP_WIFI_PASS);
     } else {
-        ESP_LOGE(TAG, "UNEXPECTED EVENT");
+        ESP_LOGW(TAG, "UNEXPECTED EVENT");
     }
 
     ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler));
@@ -78,10 +78,10 @@ void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, voi
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-        ESP_LOGI(TAG,"connect to the AP fail");
+        ESP_LOGW(TAG,"connect to the AP fail");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG, "got ip:%s",
+        ESP_LOGD(TAG, "got ip:%s",
                  ip4addr_ntoa(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
@@ -95,4 +95,8 @@ void wifi_setLowPower(){
 
 void wifi_restoreNormalPower(){
     esp_wifi_set_ps(WIFI_PS_NONE);
+}
+
+void wifi_disconnect(){
+    ESP_ERROR_CHECK(esp_wifi_stop());
 }

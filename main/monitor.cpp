@@ -1,42 +1,50 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_log.h>
+#include <esp_sleep.h>
 
+#include "configs.h"
 #include "network.h"
+#include "messenger.h"
 
-#define CONFIG_LOG_DEFAULT_LEVEL 4
-
-#define TAG "soil_monitor"
+void monitor_sleep(uint32_t seconds, const char* const message = nullptr);
 
 extern "C" void app_main(){
     ESP_LOGD(TAG, "RUNNING!");
 
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    for (int i = 0; i < 3; i++){
-        vTaskDelay(1000 / portTICK_RATE_MS);
-        ESP_LOGD(TAG, ".");
+    if (!wifi_connect()){
+        monitor_sleep(30 * 60, "Error connecting to WiFi. Will try again later."); // 30 min
     }
 
-    if (!wifi_connect()) return;
-    for (int i = 0; i < 5; i++){
-        vTaskDelay(1000 / portTICK_RATE_MS);
-        ESP_LOGD(TAG, ".");
+    if (!mqtt_app_start()){
+        monitor_sleep(30 * 60, "Error connecting to MQTT. Will try again later."); // 30 min
     }
 
-    wifi_setLowPower();
-    ESP_LOGI(TAG, "Low power mode set");
+    uint16_t humidity1 = 255;
+    if (mqtt_app_send(humidity1))
+        ESP_LOGD(TAG, "Done");
+    else
+        ESP_LOGE(TAG, "Error publishing");
 
-    for (int i = 0; i < 5; i++){
-        vTaskDelay(1000 / portTICK_RATE_MS);
-        ESP_LOGD(TAG, ".");
-    }
+    mqtt_stop_app();
+    wifi_disconnect();
+    ESP_LOGI(TAG, "WiFi disconnected");
 
-    wifi_restoreNormalPower();
-    ESP_LOGI(TAG, "Normal mode set");
+    monitor_sleep(2 * 3600); // 2 hours
 
+    // This will never run
     while (true) {
         vTaskDelay(1000 / portTICK_RATE_MS);
         ESP_LOGD(TAG, ".");
     }
+}
+
+void monitor_sleep(uint32_t seconds, const char* const message){
+    if (message != nullptr){
+        ESP_LOGE(TAG, message);
+    }
+
+    esp_deep_sleep(seconds * 1e6);
 }

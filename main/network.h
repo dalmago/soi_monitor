@@ -6,7 +6,7 @@
 #include <esp_event_base.h>
 #include <esp_event.h>
 
-#define TAG "soil_monitor"
+#include "configs.h"
 
 #define ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
 #define ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
@@ -21,5 +21,6 @@
 bool wifi_connect();
 void wifi_setLowPower();
 void wifi_restoreNormalPower();
+void wifi_disconnect();
 
 #endif

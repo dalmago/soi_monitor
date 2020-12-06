@@ -17,4 +17,10 @@ menu "soil_monitor Configuration"
         default 5
         help
             Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+    config UBIDOTS_API_TOKEN
+        string "Ubidots API token"
+        default "mytoken"
+        help
+            Ubidots API token generated on the portal.
 endmenu
