@@ -9,11 +9,11 @@
 #define UBIDOTS_DEVICE_LABEL "soil_monitor"
 #define UBIDOTS_VARIABLE_LABEL "humidity1"
 
-#define MQTT_BROKER_URL "things.ubidots.com"
-#define MQTT_BROKER_PORT 1883
+#define MQTT_BROKER_URL "industrial.api.ubidots.com"
+// #define MQTT_BROKER_PORT 8883
 
 #define MQTT_USER CONFIG_UBIDOTS_API_TOKEN
-#define MQTT_PASSWD ""
+#define MQTT_PASSWD "" // any character - not required -
 
 #define UBIDOTS_MQTT_TOPIC "/v1.6/devices/" UBIDOTS_DEVICE_LABEL
 

@@ -19,6 +19,8 @@ extern "C" void app_main(){
     }
 
     if (!mqtt_app_start()){
+        mqtt_stop_app();
+        wifi_disconnect();
         monitor_sleep(30 * 60, "Error connecting to MQTT. Will try again later."); // 30 min
     }
 
@@ -45,6 +47,9 @@ void monitor_sleep(uint32_t seconds, const char* const message){
     if (message != nullptr){
         ESP_LOGE(TAG, message);
     }
+
+    if (seconds > 1800) // more than 30min
+        seconds *= 1.04; /// + 4% for timer imprecision
 
     esp_deep_sleep(seconds * 1e6);
 }
