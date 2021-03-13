@@ -6,11 +6,13 @@
 #include "configs.h"
 #include "network.h"
 #include "messenger.h"
+#include "sensors.h"
 
 void monitor_sleep(uint32_t seconds, const char* const message = nullptr);
 
 extern "C" void app_main(){
     ESP_LOGD(TAG, "RUNNING!");
+    init_gpios();
 
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
@@ -39,7 +41,7 @@ extern "C" void app_main(){
     // This will never run
     while (true) {
         vTaskDelay(1000 / portTICK_RATE_MS);
-        ESP_LOGD(TAG, ".");
+        ESP_LOGE(TAG, ".");
     }
 }
 
