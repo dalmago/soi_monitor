@@ -13,22 +13,25 @@ void monitor_sleep(uint32_t seconds, const char* const message = nullptr);
 
 extern "C" void app_main(){
     ESP_LOGD(TAG, "RUNNING!");
-    init_gpios();
+    sensors_init();
 
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     if (!wifi_connect()){
+        sensors_cleanup();
         monitor_sleep(30 * 60, "Error connecting to WiFi. Will try again later."); // 30 min
     }
 
     if (!mqtt_app_start()){
+        sensors_cleanup();
         mqtt_stop_app();
         wifi_disconnect();
         monitor_sleep(30 * 60, "Error connecting to MQTT. Will try again later."); // 30 min
     }
 
-    std::vector<uint8_t> values;
+    std::vector<uint16_t> values;
     if (!sensor_read(values)){
+        sensors_cleanup();
         mqtt_stop_app();
         wifi_disconnect();
         monitor_sleep(30 * 60, "Error reading sensors! Will try again later."); // 30 min
@@ -41,6 +44,7 @@ extern "C" void app_main(){
 
     mqtt_stop_app();
     wifi_disconnect();
+    sensors_cleanup();
     ESP_LOGI(TAG, "WiFi disconnected");
 
     monitor_sleep(2 * 3600); // 2 hours

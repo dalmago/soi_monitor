@@ -20,8 +20,8 @@
 
 bool mqtt_app_start(void);
 void mqtt_stop_app(void);
-bool mqtt_app_send(const std::vector<uint8_t> &data);
-std::string generate_payload(const std::vector<uint8_t> &data);
+bool mqtt_app_send(const std::vector<uint16_t> &data);
+std::string generate_payload(const std::vector<uint16_t> &data);
 esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event);
 
 #endif // __SOIL_MONITOR_MESSENGER_H__

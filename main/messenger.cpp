@@ -91,7 +91,7 @@ void mqtt_stop_app(void){
     esp_mqtt_client_stop(mqtt_client);
 }
 
-bool mqtt_app_send(const std::vector<uint8_t> &data){
+bool mqtt_app_send(const std::vector<uint16_t> &data){
     std::string payload = std::move(generate_payload(data));
     // ESP_LOGD(TAG, payload.c_str());
 
@@ -100,7 +100,7 @@ bool mqtt_app_send(const std::vector<uint8_t> &data){
     return result != -1;
 }
 
-std::string generate_payload(const std::vector<uint8_t> &data){
+std::string generate_payload(const std::vector<uint16_t> &data){
     // TODO: use JSON library
 
     const char* labels[] = UBIDOTS_VARIABLE_LABELS;
