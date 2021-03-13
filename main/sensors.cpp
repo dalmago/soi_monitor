@@ -15,3 +15,9 @@ void init_gpios(){
     gpio_set_level(SENSOR1_GPIO, 0);
     gpio_set_level(SENSOR2_GPIO, 0);
 }
+
+bool sensor_read(std::vector<uint8_t> &sensor_data){
+    sensor_data.push_back(255);
+    sensor_data.push_back(128);
+    return true;
+}

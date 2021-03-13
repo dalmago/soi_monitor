@@ -91,8 +91,8 @@ void mqtt_stop_app(void){
     esp_mqtt_client_stop(mqtt_client);
 }
 
-bool mqtt_app_send(const uint16_t value){
-    std::string payload = generate_payload(UBIDOTS_VARIABLE_LABEL, value);
+bool mqtt_app_send(const std::vector<uint8_t> &data){
+    std::string payload = std::move(generate_payload(data));
     // ESP_LOGD(TAG, payload.c_str());
 
     int result = esp_mqtt_client_publish(mqtt_client, UBIDOTS_MQTT_TOPIC, payload.c_str(), payload.size(), 0, 0);
@@ -100,14 +100,27 @@ bool mqtt_app_send(const uint16_t value){
     return result != -1;
 }
 
-std::string generate_payload(const std::string variable, const uint16_t value){
+std::string generate_payload(const std::vector<uint8_t> &data){
     // TODO: use JSON library
 
-    std::string payload = "{\"";
-    payload.append(variable);
-    payload.append("\": {\"value\": ");
-    payload.append(std::to_string(value));
-    payload.append("}}");
+    const char* labels[] = UBIDOTS_VARIABLE_LABELS;
+
+    assert(sizeof(labels) / sizeof(const char*) == data.size());
+
+    std::string payload = "{";
+    uint8_t i = 0;
+    for (auto val : data){
+        payload.append("\"");
+        payload.append(labels[i]);
+        payload.append("\":{\"value\":");
+        payload.append(std::to_string(val));
+        payload.append("}");
+
+        if (++i < data.size()) // not last element
+            payload.append(",");
+    }
+    payload.append("}");
+
     return payload;
 }
 

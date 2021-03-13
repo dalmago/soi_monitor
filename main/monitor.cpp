@@ -2,6 +2,7 @@
 #include <freertos/task.h>
 #include <esp_log.h>
 #include <esp_sleep.h>
+#include <vector>
 
 #include "configs.h"
 #include "network.h"
@@ -26,8 +27,14 @@ extern "C" void app_main(){
         monitor_sleep(30 * 60, "Error connecting to MQTT. Will try again later."); // 30 min
     }
 
-    uint16_t humidity1 = 255;
-    if (mqtt_app_send(humidity1))
+    std::vector<uint8_t> values;
+    if (!sensor_read(values)){
+        mqtt_stop_app();
+        wifi_disconnect();
+        monitor_sleep(30 * 60, "Error reading sensors! Will try again later."); // 30 min
+    }
+
+    if (mqtt_app_send(values))
         ESP_LOGD(TAG, "Done");
     else
         ESP_LOGE(TAG, "Error publishing");
