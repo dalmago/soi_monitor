@@ -49,9 +49,6 @@ bool sensor_read(std::vector<uint16_t> &sensor_data){
     sensor_data.push_back(adc_data);
 
     gpio_set_level(SENSOR2_GPIO, 0);
-
-    sensor_data.push_back(255);
-    sensor_data.push_back(128);
     return true;
 }
 
