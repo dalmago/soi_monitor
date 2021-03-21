@@ -74,7 +74,7 @@ bool mqtt_app_start(void){
     };
 
     mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
-    esp_mqtt_client_set_uri(mqtt_client, "mqtts://"MQTT_BROKER_URL);
+    esp_mqtt_client_set_uri(mqtt_client, "mqtts://" MQTT_BROKER_URL);
 
     esp_mqtt_client_start(mqtt_client);
     EventBits_t bits =  xEventGroupWaitBits(mqtt_event_group, MQTT_CONNECTED_BIT | MQTT_ERROR_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
