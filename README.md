@@ -13,7 +13,7 @@ Using [Ubidots](http://ubidots.com/) as dashboard and MQTT broker.
 # Circuit Schematic
 
 The circuit schematic can be seen by using [Falstad Circuit](http://www.falstad.com/circuit/circuitjs.html) and importing the following text:
-'''
+```
 $ 1 0.000005 11.558428452718767 59 5 43 5e-11
 t 320 208 352 208 0 1 -2.776379241778025 0.5850499442985184 100 default
 r 352 224 352 272 0 1000
@@ -37,4 +37,4 @@ w 288 208 320 208 0
 x 360 195 402 198 4 12 2N3904
 o 1 64 3 4098 1.25 0.00625 0 1
 o 14 64 0 x81016 5 0.00009765625 1 1 0.25 0
-'''
+```
