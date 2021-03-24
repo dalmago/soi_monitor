@@ -37,7 +37,7 @@ bool sensor_read(std::vector<uint16_t> &sensor_data){
     sensor_data.push_back(adc_data);
 
     gpio_set_level(SENSOR1_GPIO, 0);
-    // vTaskDelay(500 / portTICK_RATE_MS); // wait 500ms
+    vTaskDelay(500 / portTICK_RATE_MS); // wait 500ms
     gpio_set_level(SENSOR2_GPIO, 1); // activate sensor 2
     vTaskDelay(500 / portTICK_RATE_MS); // wait 500ms
 
@@ -52,5 +52,9 @@ bool sensor_read(std::vector<uint16_t> &sensor_data){
 }
 
 void sensors_cleanup(){
+    // Makes sure the output are low
+    gpio_set_level(SENSOR1_GPIO, 0);
+    gpio_set_level(SENSOR2_GPIO, 0);
+
     adc_deinit();
 }
